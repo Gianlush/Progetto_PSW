@@ -24,7 +24,6 @@ class _mainScreenState extends State<MainScreen>{
           appBar: AppBar(
             title: Text(Constants.TITLE_APP),
             centerTitle: true,
-            shape: RoundedRectangleBorder(),
             bottom: TabBar(
               tabs: [
                 Tab(text: "Shop", icon: Icon(Icons.search_rounded)),

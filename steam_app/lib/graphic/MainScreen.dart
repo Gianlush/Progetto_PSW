@@ -19,7 +19,7 @@ class _mainScreenState extends State<MainScreen>{
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-        length: 4,
+        length: 3,
         child: Scaffold(
           appBar: AppBar(
             title: Text(Constants.TITLE_APP),
@@ -27,7 +27,6 @@ class _mainScreenState extends State<MainScreen>{
             bottom: TabBar(
               tabs: [
                 Tab(text: "Shop", icon: Icon(Icons.search_rounded)),
-                Tab(text: "Collezione", icon: Icon(Icons.gamepad_outlined)),
                 Tab(text: "Account",icon: Icon(Icons.account_circle_outlined)),
                 Tab(text: "Cart",icon: Icon(Icons.shopping_cart_sharp))
               ],
@@ -36,7 +35,6 @@ class _mainScreenState extends State<MainScreen>{
           body: TabBarView(
             children: [
               ShopPage(),
-              LibraryPage(),
               AccountPage(),
               CartPage()
             ],

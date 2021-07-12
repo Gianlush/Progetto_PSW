@@ -1,5 +1,6 @@
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class AccountPage extends StatefulWidget {
   @override
@@ -11,7 +12,9 @@ class AccountPage extends StatefulWidget {
 class _accountPageState extends State<AccountPage>{
   @override
   Widget build(BuildContext context) {
-    return null;
+    return Scaffold(
+
+    );
   }
 
 }

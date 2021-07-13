@@ -3,11 +3,11 @@ class Game {
   String name;
   String genre;
   double price;
-  int quantity;
+  int quantityAvailable;
 
 
 
-  Game({this.id, this.name, this.genre, this.quantity, this.price});
+  Game({this.id, this.name, this.genre, this.quantityAvailable, this.price});
 
   factory Game.fromJson(Map<String, dynamic> json) {
     return Game(
@@ -15,7 +15,7 @@ class Game {
       name: json['name'],
       genre: json['genre'],
       price: json['price'],
-      quantity: json['quantity'],
+      quantityAvailable: json['quantity'],
     );
   }
 
@@ -24,7 +24,7 @@ class Game {
     'name': name,
     'genre': genre,
     'price': price,
-    'quantity':quantity,
+    'quantity':quantityAvailable,
   };
 
   @override
@@ -32,5 +32,10 @@ class Game {
     return name;
   }
 
-
+  bool equals(Game game){
+    if(this.name==game.name && this.genre==game.genre)
+      return true;
+    else
+      return false;
+  }
 }

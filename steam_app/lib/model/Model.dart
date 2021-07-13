@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:steam_app/model/objects/Order.dart';
 import 'package:steam_app/model/utility/Constants.dart';
 import 'package:steam_app/model/utility/LogInResult.dart';
 
@@ -81,9 +82,12 @@ class Model {
     }
   }
 
-  Future<List<Game>> searchGame({String value,String type}) async {
+  Future<List<Game>> searchGame({String value,String type, int pageNumber, int pageSize=7, String sortBy="name"}) async {
     Map<String, String> params = Map();
-    params["x"] = value;
+    params[type] = value;
+    params["pageNumber"] = pageNumber.toString();
+    params["pageSize"] = pageSize.toString();
+    params["sortBy"] = sortBy;
     String REQUEST;
     if(type == "genre")
       REQUEST = Constants.REQUEST_SEARCH_BY_GENRE;
@@ -94,6 +98,16 @@ class Model {
     }
     catch (e) {
       return null; // not the best solution
+    }
+  }
+
+  Future<Order> createOrder(Order order) async {
+    try {
+      String rawResult = await _restManager.makePostRequest(Constants.ADDRESS_STORE_SERVER, Constants.REQUEST_CREATE_ORDER, order);
+      Order result = Order.fromJson(jsonDecode(rawResult));
+      return result;
+    } catch(e){
+      return null;
     }
   }
 

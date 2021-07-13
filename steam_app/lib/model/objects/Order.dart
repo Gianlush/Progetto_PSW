@@ -1,37 +1,42 @@
 import 'Game.dart';
+import 'GamePerOrder.dart';
 import 'User.dart';
 
 class Order {
   int id;
   int user;
-  String shop_date;
-  String payment_method;
-  List<Game> game_per_order;
+  DateTime shopDate;
+  String paymentMethod;
+  List<GamePerOrder> gamePerOrder;
 
 
-  Order({this.id, this.user, this.shop_date,this.game_per_order, this.payment_method});
+  Order({this.id, this.user, this.shopDate,this.gamePerOrder, this.paymentMethod});
 
   factory Order.fromJson(Map<String, dynamic> json) {
     return Order(
       id: json['id'],
-      user: json['name'],
-      shop_date: json['shop_date'],
-      game_per_order: json['game_per_order'],
-      payment_method :json['payment_method']
+      user: json['user'],
+      shopDate: json['shopDate'],
+      gamePerOrder: json['gamePerOrder'],
+      paymentMethod :json['paymentMethod']
     );
   }
 
   Map<String, dynamic> toJson() => {
     'id': id,
-    'user': user,
-    'shop_date': shop_date,
-    'payment_method': payment_method,
-    'game_oer_order':game_per_order
+    'user': User(id: user).toJson(),
+    'paymentMethod': paymentMethod,
+    'gamePerOrder':gamePerOrder
   };
 
- /* @override
-  String toString() {
-  }*/
+  GamePerOrder searchEqualGame(Game game){
+    for(int i=0;i<gamePerOrder.length;i++){
+      if(gamePerOrder[i].game.equals(game))
+        return gamePerOrder[i];
+      else
+        return null;
+    }
+  }
 
 
 }

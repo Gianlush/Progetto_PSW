@@ -5,7 +5,7 @@ import 'package:steam_app/model/objects/Game.dart';
 import 'package:steam_app/model/widget/GameView.dart';
 import 'package:steam_app/model/widget/MyInputField.dart';
 import 'package:steam_app/model/widget/SearchButton.dart';
-import 'package:steam_app/model/widget/ShopButton.dart';
+import 'package:steam_app/model/widget/AddToCartButton.dart';
 
 class ShopPage extends StatefulWidget {
   @override
@@ -17,7 +17,9 @@ class ShopPage extends StatefulWidget {
 class _shopPageState extends State<ShopPage>{
 
   List<Game> games;
-  bool _searching = false;
+  bool searching = false;
+  int pageNumber = 1;
+  String type;
 
   TextEditingController textController = TextEditingController();
 
@@ -26,19 +28,44 @@ class _shopPageState extends State<ShopPage>{
     return Column(
               children: [
                 parteSuperiore(),
-                parteInferiore()
+                parteInferiore(),
+                pageCounter(),
               ],
     );
   }
+
+  Widget pageCounter() {
+    if(games == null || (games.isEmpty && pageNumber==0))
+      return SizedBox.shrink();
+    else
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          RawMaterialButton(
+            child: Icon(Icons.arrow_back_ios_sharp),
+            onPressed: () => previous(),
+          ),
+          Text(pageNumber.toString(), style: TextStyle(color: Colors.black)),
+          RawMaterialButton(
+              child: Icon(Icons.arrow_forward_ios_sharp),
+              onPressed: () => next()
+          )
+        ],
+      );
+  }
+
+
   Widget parteInferiore() {
-    if(_searching )
+    if(searching )
       return CircularProgressIndicator();
     else if(games == null)
       return SizedBox.shrink();
-    else if(games.isEmpty)
+    else if(games.isEmpty && pageNumber == 1)
       return Text("NO RESULT!", style: TextStyle(fontSize: 25));
+    else if (games.isEmpty && pageNumber != 1)
+      return Expanded(child: Text("NO MORE RESULT!", style: TextStyle(fontSize: 25)));
     else
-      return Expanded(
+      return Flexible(
         child: Container(
           child: ListView.builder(
             itemCount: games.length,
@@ -47,7 +74,7 @@ class _shopPageState extends State<ShopPage>{
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     GameView(games[index]),
-                    ShopButton(games[index])
+                    AddToCartButton(games[index])
                   ]
               );
             },
@@ -61,7 +88,7 @@ class _shopPageState extends State<ShopPage>{
       padding: EdgeInsets.all(10),
       child: Row(
         children: [
-          Flexible(child: MyInputField(controller: textController,)),
+          Flexible(child: MyInputField(controller: textController, text: "Search: ",hint: "Sekiro",)),
           Text("Search by:",style: TextStyle(fontSize: 18),),
           searchButton("name",() => _search("name")),
           searchButton("genre",() => _search("genre"))
@@ -70,14 +97,30 @@ class _shopPageState extends State<ShopPage>{
     );
   }
 
+  next() {
+    if(!games.isEmpty) {
+      pageNumber++;
+      _search(type);
+    }
+  }
+
+  previous() {
+    if(pageNumber != 1){
+      pageNumber--;
+      _search(type);
+    }
+  }
+
   _search(String type){
     setState(() {
-      _searching=true;
+      this.type=type;
+      searching=true;
       games = null;
     });
-    Model.sharedInstance.searchGame(type: type, value: textController.text).then((value) {
+    int page = pageNumber-1;
+    Model.sharedInstance.searchGame(type: type, value: textController.text, pageNumber: page).then((value) {
       setState(() {
-        _searching = false;
+        searching = false;
         games = value;
       });
     });

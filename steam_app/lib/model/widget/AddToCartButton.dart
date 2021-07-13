@@ -1,11 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:steam_app/graphic/CartPage.dart';
 import 'package:steam_app/model/objects/Game.dart';
+import 'package:steam_app/model/objects/GamePerOrder.dart';
 
-class ShopButton extends StatelessWidget {
+class AddToCartButton extends StatelessWidget {
   final Game game;
 
-  const ShopButton(this.game, {Key key}) : super(key: key);
+  const AddToCartButton(this.game, {Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +20,7 @@ class ShopButton extends StatelessWidget {
        child: Row(
          children: [
          Text("Add to Cart", style: TextStyle(color: Colors.white)),
-         Icon(Icons.shopping_cart)
+         Icon(Icons.add_shopping_cart)
        ],
       ),
      )
@@ -26,10 +28,12 @@ class ShopButton extends StatelessWidget {
   }
 
   addToCart(Game game){
-    //TODO
-    //if(AccountPage.user == null ) return "LOGIN FIRST";
+    GamePerOrder newGame = CartPageState.order.searchEqualGame(game);
+    if(newGame != null) {
+      newGame.quantity++;
+    }
+    else {
+      CartPageState.order.gamePerOrder.add(GamePerOrder(game: game, quantity: 1));
+    }
   }
-
-
-
 }

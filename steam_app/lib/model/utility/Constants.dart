@@ -20,6 +20,7 @@ class Constants{
   static final String REQUEST_SEARCH_BY_NAME = "/games/name";
   static final String REQUEST_SEARCH_BY_GENRE = "/games/genre";
   static final String REQUEST_ADD_USER = "/users";
+  static final String REQUEST_CREATE_ORDER = "/orders";
 
 
 

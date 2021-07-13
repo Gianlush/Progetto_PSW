@@ -19,7 +19,7 @@ class GameView extends StatelessWidget {
               MyContainer(infoType: "Game",value: game.name),
               MyContainer(infoType: "Genre",value: game.genre),
               MyContainer(infoType: "Price",value: game.price.toString()+"€"),
-              MyContainer(infoType: "Available",value: game.quantity.toString()),
+              MyContainer(infoType: "Available",value: game.quantityAvailable.toString()),
             ],
           ),
         )
@@ -37,7 +37,7 @@ class MyContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 200,
+      width: 270,
       child: Row(
         children: [
           Text(

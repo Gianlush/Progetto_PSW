@@ -26,6 +26,7 @@ class RestManager {
         if ( type == TypeHeader.json ) {
           contentType = "application/json;charset=utf-8";
           formattedBody = json.encode(body);
+          print(formattedBody);
         }
         else if ( type == TypeHeader.urlencoded ) {
           contentType = "application/x-www-form-urlencoded";

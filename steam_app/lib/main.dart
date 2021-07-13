@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:steam_app/model/utility/Constants.dart';
 
 import 'graphic/MainScreen.dart';
+import 'model/objects/Game.dart';
 
 void main() {
   runApp(MyApp());

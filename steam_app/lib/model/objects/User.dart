@@ -1,8 +1,11 @@
+import 'Order.dart';
+
 class User {
   int id;
   String name;
   String surname;
   String email;
+  List<Order> orders = <Order>[];
 
 
   User({this.id, this.name, this.surname,this.email});

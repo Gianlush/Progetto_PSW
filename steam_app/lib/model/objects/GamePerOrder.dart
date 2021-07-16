@@ -14,7 +14,7 @@ class GamePerOrder {
   factory GamePerOrder.fromJson(Map<String, dynamic> json) {
     return GamePerOrder(
       id: json['id'],
-      game: json['genre'],
+      game: Game.fromJson(json['game']),
       quantity: json['quantity'],
     );
   }

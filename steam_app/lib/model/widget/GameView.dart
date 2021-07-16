@@ -27,39 +27,30 @@ class GameView extends StatelessWidget {
   }
 }
 
-
-class MyContainer extends StatelessWidget {
-  final String infoType;
-  final String value;
-
-  const MyContainer({Key key, @required this.infoType, @required this.value}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
+  Widget MyContainer({infoType: String, value: String}) {
     return Container(
-      width: 270,
-      child: Row(
-        children: [
-          Text(
-            infoType+":",
-            softWrap: true,
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 15,
-            )
-          ),
-          Expanded(child: Text(
-              "  "+value,
-              softWrap: true,
-              style: TextStyle(
-                fontStyle: FontStyle.italic,
-                color: Colors.green,
-                fontSize: 20,
+        width: 270,
+        child: Row(
+            children: [
+              Text(
+                  infoType+":",
+                  softWrap: true,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 15,
+                  )
+              ),
+              Expanded(
+                  child: Text("  "+value,
+                      softWrap: true,
+                      style: TextStyle(
+                        fontStyle: FontStyle.italic,
+                        color: Colors.greenAccent,
+                        fontSize: 20,
+                      )
+                  )
               )
-          ))
-        ]
-      )
+            ]
+        )
     );
-  }
-
 }

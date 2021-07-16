@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:convert';
 import 'package:http/http.dart';
+import 'package:steam_app/model/utility/ErrorListener.dart';
 
 
 enum TypeHeader {
@@ -10,7 +11,7 @@ enum TypeHeader {
 
 
 class RestManager {
-  //ErrorListener delegate;
+  ErrorListener delegate;
   String token;
 
 
@@ -25,8 +26,9 @@ class RestManager {
         dynamic formattedBody;
         if ( type == TypeHeader.json ) {
           contentType = "application/json;charset=utf-8";
+          if(body.runtimeType == String)
+            formattedBody = body;
           formattedBody = json.encode(body);
-          print(formattedBody);
         }
         else if ( type == TypeHeader.urlencoded ) {
           contentType = "application/x-www-form-urlencoded";
@@ -36,7 +38,7 @@ class RestManager {
         Map<String, String> headers = Map();
         headers[HttpHeaders.contentTypeHeader] = contentType;
         if ( token != null ) {
-          // headers[HttpHeaders.authorizationHeader] = 'bearer $token';
+          headers[HttpHeaders.authorizationHeader] = 'bearer $token';
         }
         // making request
         switch ( method ) {
@@ -72,10 +74,7 @@ class RestManager {
         }*/
         return response.body;
       } catch(err) {
-       /* if ( delegate != null && !errorOccurred ) {
-          delegate.errorNetworkOccurred(Constants.MESSAGE_CONNECTION_ERROR);
-          errorOccurred = true;
-        }*/
+        print(err);
         await Future.delayed(const Duration(seconds: 5), () => null); // not the best solution
       }
     }

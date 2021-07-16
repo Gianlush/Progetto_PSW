@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'Game.dart';
 import 'GamePerOrder.dart';
 import 'User.dart';
@@ -5,19 +8,21 @@ import 'User.dart';
 class Order {
   int id;
   int user;
+  double total;
   DateTime shopDate;
   String paymentMethod;
   List<GamePerOrder> gamePerOrder;
 
 
-  Order({this.id, this.user, this.shopDate,this.gamePerOrder, this.paymentMethod});
+  Order({this.id, this.user, this.shopDate,this.gamePerOrder, this.paymentMethod, this.total});
 
   factory Order.fromJson(Map<String, dynamic> json) {
     return Order(
       id: json['id'],
-      user: json['user'],
-      shopDate: json['shopDate'],
-      gamePerOrder: json['gamePerOrder'],
+      user: json['user']['id'],
+      total: json['total'],
+      shopDate: Order.toDate(json['shopDate']),
+      gamePerOrder: (json['gamePerOrder'] as List).map((i) => GamePerOrder.fromJson(i)).toList(),
       paymentMethod :json['paymentMethod']
     );
   }
@@ -28,6 +33,11 @@ class Order {
     'paymentMethod': paymentMethod,
     'gamePerOrder':gamePerOrder
   };
+  
+  static DateTime toDate(String date){
+    List<int> list = date.split("-").map((i) => int.parse(i)).toList();
+    return DateTime(list[0],list[1],list[2]);
+  }
 
   GamePerOrder searchEqualGame(Game game){
     for(int i=0;i<gamePerOrder.length;i++){

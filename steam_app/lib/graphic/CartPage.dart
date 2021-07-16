@@ -25,14 +25,13 @@ class CartPageState extends State<CartPage>{
 
   static Order order = Order(
     gamePerOrder: <GamePerOrder>[],
-
   );
 
   @override
   Widget build(BuildContext context) {
     if(order.gamePerOrder.isEmpty)
       return Padding(
-          padding: EdgeInsets.all(20),
+          padding: EdgeInsets.fromLTRB(20,450,20,20),
           child: Row(
               mainAxisAlignment: MainAxisAlignment.center, 
               crossAxisAlignment: CrossAxisAlignment.start, 
@@ -51,26 +50,35 @@ class CartPageState extends State<CartPage>{
   }
 
   Widget Payment() {
-    GamePerOrder order = quantityExceeded();
+    GamePerOrder gamePerOrder = quantityExceeded();
 
     if(AccountPageState.user == null){
       return Padding(
-          padding: EdgeInsets.all(20),
-          child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [Text("YOU MUST LOGIN FIRST!", style: TextStyle(fontSize: 35))]
+          padding: EdgeInsets.fromLTRB(20,450,20,20),
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+
+              children: [
+                Text("YOU MUST LOGIN FIRST!", style: TextStyle(fontSize: 35)),
+                RawMaterialButton(
+                  onPressed: () => refresh(paying: false),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(35)),
+                  fillColor: Colors.deepPurple,
+                  child: Text("OK", style: TextStyle(color: Colors.white),),
+                )
+              ],
           )
       );
     }
-    else if(order != null){
+    else if(gamePerOrder != null){
       return Padding(
-          padding: EdgeInsets.all(20),
+          padding: EdgeInsets.fromLTRB(20,450,20,20),
           child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text("Game: ["+order.game.name+"] not available in the quantity ["+order.quantity.toString()+"]", style: TextStyle(fontSize: 35)),
+                Text("Game: ["+gamePerOrder.game.name+"] not available in the quantity ["+gamePerOrder.quantity.toString()+"]", style: TextStyle(fontSize: 35)),
                 RawMaterialButton(
                   onPressed: () => refresh(paying: false),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(35)),
@@ -88,7 +96,7 @@ class CartPageState extends State<CartPage>{
           Flexible(
               child: Container(
                   width: 600,
-                  child: MyInputField(text: "Payment Method:",controller: textController, hint: "Paypal",)
+                  child: MyInputField(text: "Payment Method:",controller: textController, hint: "Example: Paypal",)
               )
           ),
           RawMaterialButton(
@@ -154,6 +162,7 @@ class CartPageState extends State<CartPage>{
   }
 
   createOrder() {
+    order.user = AccountPageState.user.id;
     String method = textController.text;
     if(method == "")
       return ;
@@ -162,7 +171,6 @@ class CartPageState extends State<CartPage>{
       Model.sharedInstance.createOrder(order).then( (value) {
         setState(() {
           paying = false;
-          AccountPageState.user.orders.add(value);
           order.gamePerOrder.clear();
         });
       });
@@ -182,7 +190,7 @@ class CartPageState extends State<CartPage>{
             itemCount: order.gamePerOrder.length,
             itemBuilder: (context, index) {
               return Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     GameView(order.gamePerOrder[index].game),
                     AddRemoveButton(() => refresh(paying: false), order.gamePerOrder[index])

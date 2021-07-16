@@ -16,10 +16,12 @@ class ShopPage extends StatefulWidget {
 
 class _shopPageState extends State<ShopPage>{
 
-  List<Game> games;
+  static List<Game> games;
   bool searching = false;
   int pageNumber = 1;
-  String type;
+  String lastSearchBy = "";
+  String lastSortBy = "";
+  String lastValue = "";
 
   TextEditingController textController = TextEditingController();
 
@@ -61,9 +63,7 @@ class _shopPageState extends State<ShopPage>{
     else if(games == null)
       return SizedBox.shrink();
     else if(games.isEmpty && pageNumber == 1)
-      return Text("NO RESULT!", style: TextStyle(fontSize: 25));
-    else if (games.isEmpty && pageNumber != 1)
-      return Expanded(child: Text("NO MORE RESULT!", style: TextStyle(fontSize: 25)));
+      return Expanded(child: Padding(padding: EdgeInsets.fromLTRB(0, 80, 0, 0),child: Text("NO RESULT!", style: TextStyle(fontSize: 35))));
     else
       return Flexible(
         child: Container(
@@ -71,7 +71,7 @@ class _shopPageState extends State<ShopPage>{
             itemCount: games.length,
             itemBuilder: (context, index) {
               return Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     GameView(games[index]),
                     AddToCartButton(games[index])
@@ -84,41 +84,77 @@ class _shopPageState extends State<ShopPage>{
   }
 
   Widget parteSuperiore () {
-    return Padding(
-      padding: EdgeInsets.all(10),
-      child: Row(
-        children: [
-          Flexible(child: MyInputField(controller: textController, text: "Search: ",hint: "Sekiro",)),
-          Text("Search by:",style: TextStyle(fontSize: 18),),
-          searchButton("name",() => _search("name")),
-          searchButton("genre",() => _search("genre"))
-        ],
-      ),
-    );
+    if(lastSearchBy == "name")
+      return Padding(
+        padding: EdgeInsets.fromLTRB(10,10,10,10),
+        child: Row(
+          children: [
+            Flexible(child: MyInputField(controller: textController, text: "Search: ",hint: "Example: Sekiro",)),
+            Text("Search by:",style: TextStyle(fontSize: 18),),
+            searchButton("name",() => _search(1, value: textController.text, searchBy: "name")),
+            searchButton("genre",() => _search(1, value: textController.text, searchBy: "genre")),
+            Text("Order by:",style: TextStyle(fontSize: 18)),
+            searchButton("genre",() => _search(1, value: lastValue, searchBy: lastSearchBy, sortBy: "genre")),
+            searchButton("price",() => _search(1, value: lastValue, searchBy: lastSearchBy, sortBy: "price",)),
+          ],
+        ),
+      );
+    else if(lastSearchBy == "genre")
+      return Padding(
+        padding: EdgeInsets.all(10),
+        child: Row(
+          children: [
+            Flexible(child: MyInputField(controller: textController, text: "Search: ",hint: "Sekiro",)),
+            Text("Search by:",style: TextStyle(fontSize: 18),),
+            searchButton("name",() => _search(1 , value: textController.text, searchBy: "name")),
+            searchButton("genre",() => _search(1, value: textController.text, searchBy: "genre")),
+            Text("Order by:",style: TextStyle(fontSize: 18)),
+            searchButton("name",() => _search(1, value: lastValue, searchBy: lastSearchBy, sortBy: "name")),
+            searchButton("price",() => _search(1, value: lastValue, searchBy: lastSearchBy, sortBy: "price",)),
+          ],
+        ),
+      );
+    else
+      return Padding(
+        padding: EdgeInsets.all(10),
+        child: Row(
+          children: [
+            Flexible(child: MyInputField(controller: textController, text: "Search: ",hint: "Sekiro",)),
+            Text("Search by:",style: TextStyle(fontSize: 18),),
+            searchButton("name",() => _search(1, value: textController.text, searchBy: "name")),
+            searchButton("genre",() => _search(1, value: textController.text, searchBy: "genre")),
+          ],
+        ),
+      );
   }
 
   next() {
-    if(!games.isEmpty) {
+    if(games.length == 7) {
       pageNumber++;
-      _search(type);
+      _search(pageNumber, value: lastValue, sortBy: lastSortBy, searchBy: lastSearchBy);
     }
   }
 
   previous() {
     if(pageNumber != 1){
       pageNumber--;
-      _search(type);
+      _search(pageNumber, value: lastValue, sortBy: lastSortBy, searchBy: lastSearchBy);
     }
   }
 
-  _search(String type){
+  _search(int page, {String value, String searchBy, String sortBy="name"}){
+
+    lastValue = value;
+    lastSearchBy = searchBy;
+    lastSortBy = sortBy;
+    pageNumber = page;
+
     setState(() {
-      this.type=type;
       searching=true;
-      games = null;
     });
-    int page = pageNumber-1;
-    Model.sharedInstance.searchGame(type: type, value: textController.text, pageNumber: page).then((value) {
+
+    page = pageNumber-1;
+    Model.sharedInstance.searchGame(type: searchBy, value: value, pageNumber: page, sortBy: sortBy).then((value) {
       setState(() {
         searching = false;
         games = value;

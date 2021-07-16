@@ -6,7 +6,6 @@ import 'package:steam_app/model/utility/Constants.dart';
 
 import 'AccountPage.dart';
 import 'CartPage.dart';
-import 'LibraryPage.dart';
 import 'ShopPage.dart';
 
 class MainScreen extends StatefulWidget {
@@ -39,7 +38,8 @@ class _mainScreenState extends State<MainScreen>{
               CartPage()
             ],
           ),
-        )
+        ),
+        initialIndex: 1,
       );
   }
 

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:steam_app/graphic/AccountPage.dart';
 import 'package:steam_app/model/objects/Order.dart';
 import 'package:steam_app/model/utility/Constants.dart';
 import 'package:steam_app/model/utility/LogInResult.dart';
@@ -39,12 +40,16 @@ class Model {
         }
       }
       _restManager.token = _authenticationData.accessToken;
-      Timer.periodic(Duration(seconds: (_authenticationData.expiresIn - 50)), (Timer t) {
-        _refreshToken();
+      print("last: "+_authenticationData.expiresIn.toString());
+      Timer.periodic(Duration(seconds: (45)), (Timer t) async {
+        bool refresh = await _refreshToken();
+        if(!refresh)
+          t.cancel();
       });
       return LogInResult.logged;
     }
     catch (e) {
+      print(e);
       return LogInResult.error_unknown;
     }
   }
@@ -58,12 +63,16 @@ class Model {
       String result = await _restManager.makePostRequest(Constants.ADDRESS_AUTHENTICATION_SERVER, Constants.REQUEST_LOGIN, params, type: TypeHeader.urlencoded);
       _authenticationData = AuthenticationData.fromJson(jsonDecode(result));
       if ( _authenticationData.hasError() ) {
+        AccountPageState.forceLogout();
+        print("refresh failed");
         return false;
       }
       _restManager.token = _authenticationData.accessToken;
+      print("token refreshed");
       return true;
     }
     catch (e) {
+      print(e);
       return false;
     }
   }
@@ -78,11 +87,12 @@ class Model {
       return true;
     }
     catch (e) {
+      print(e);
       return false;
     }
   }
 
-  Future<List<Game>> searchGame({String value,String type, int pageNumber, int pageSize=7, String sortBy="name"}) async {
+  Future<List<Game>> searchGame({String value="",String type="name", int pageNumber, int pageSize=7, String sortBy="name"}) async {
     Map<String, String> params = Map();
     params[type] = value;
     params["pageNumber"] = pageNumber.toString();
@@ -97,16 +107,39 @@ class Model {
       return List<Game>.from(json.decode(await _restManager.makeGetRequest(Constants.ADDRESS_STORE_SERVER, REQUEST, params)).map((i) => Game.fromJson(i)).toList());
     }
     catch (e) {
+      print(e);
       return null; // not the best solution
     }
   }
 
   Future<Order> createOrder(Order order) async {
     try {
-      String rawResult = await _restManager.makePostRequest(Constants.ADDRESS_STORE_SERVER, Constants.REQUEST_CREATE_ORDER, order);
+      String rawResult = await _restManager.makePostRequest(Constants.ADDRESS_STORE_SERVER, Constants.REQUEST_GET_OR_CREATE_ORDER, order);
       Order result = Order.fromJson(jsonDecode(rawResult));
       return result;
     } catch(e){
+      print(e);
+      return null;
+    }
+  }
+
+  Future<User> getUserByEmail(User user) async{
+    try{
+      String rawResult = await _restManager.makePostRequest(Constants.ADDRESS_STORE_SERVER, Constants.REQUEST_USER_BY_EMAIL,user);
+      return User.fromJson(jsonDecode(rawResult));
+    } catch(e){
+      print(e);
+      return null;
+    }
+  }
+
+  Future<List<Order>> searchOrder(User user) async {
+    try {
+      Map<String, String> params = Map();
+      params["user"] = user.id.toString();
+      return List<Order>.from(json.decode(await _restManager.makeGetRequest(Constants.ADDRESS_STORE_SERVER, Constants.REQUEST_GET_OR_CREATE_ORDER, params)).map((i) => Order.fromJson(i)).toList());
+    } catch(e){
+      print(e);
       return null;
     }
   }
@@ -122,60 +155,9 @@ class Model {
       }
     }
     catch (e) {
+      print(e);
       return null; // not the best solution
     }
   }
-
-
- /* Future<User> register(User user, String password) async {
-    User result = await addUserDB(user);
-    if(result==null)
-      return null;
-
-
-      Map<String, String> params = Map();
-      params["grant_type"] = "password";
-      params["client_id"] = Constants.CLIENT_ID_MASTER;
-      params["username"] = Constants.USERNAME_MASTER;
-      params["password"] = Constants.PASSWORD_MASTER;
-      String keycloak = await _restManager.makePostRequest(Constants.ADDRESS_AUTHENTICATION_SERVER, Constants.REQUEST_LOGIN_MASTER, params, type: TypeHeader.urlencoded);
-      _authenticationData = AuthenticationData.fromJson(jsonDecode(keycloak));
-      _restManager.token = _authenticationData.accessToken;
-
-      /// 2. Creo il corpo della richiesta per registrare l'utente e invio la richiesta a Keycloak
-      var paramsKeycloakAsString = '''{
-        "firstName": "${user.name}",
-        "lastName": "${user.surname}",
-        "email": "${user.email}",
-        "username": "${user.email}",
-        "attributes" : {
-          "id": ${result.id}
-        },
-        "credentials" : [{
-          "type": "password",
-          "value": "$password",
-          "temporary": false
-        }],
-        "enabled": true
-      }''';
-      Map keycloakJson = json.decode(paramsKeycloakAsString);
-      String response = await _restManager.makePostRequest(Constants.ADDRESS_AUTHENTICATION_SERVER, Constants.REQUEST_SIGNUP, keycloakJson);
-
-      if(response.isNotEmpty) return SignUpResult.unknown_error;
-
-      /// 3. Effettuo il logout dal realm Master
-      params = Map();
-      preferences.remove('token');
-      params["client_id"] = Constants.CLIENT_ID_MASTER;
-      params["refresh_token"] = _authenticationData.refreshToken;
-      await _restManager.makePostRequest(Constants.ADDRESS_AUTHENTICATION_SERVER, Constants.REQUEST_LOGOUT_MASTER, params, type: TypeHeader.urlencoded);
-
-      return SignUpResult.signup;
-    }
-    catch (e) {
-      return SignUpResult.unknown_error;
-    }
-  }*/
-
 
 }

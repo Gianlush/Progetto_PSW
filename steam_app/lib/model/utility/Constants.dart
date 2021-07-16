@@ -11,16 +11,17 @@ class Constants{
   static final String REQUEST_LOGOUT_MASTER="/auth/realms/master/protocol/openid-connect/logout";
 
 
-  static final String ADDRESS_AUTHENTICATION_SERVER = "http://localhost:8080/auth";
+  static final String ADDRESS_AUTHENTICATION_SERVER = "localhost:8080";
   static final String ADDRESS_STORE_SERVER = "localhost:8081";
 
-  static final String REQUEST_LOGIN = "/realms/" + REALM + "/protocol/openid-connect/token";
+  static final String REQUEST_LOGIN = "/auth/realms/" + REALM + "/protocol/openid-connect/token";
   static final String REQUEST_LOGOUT = "/auth/realms/" + REALM + "/protocol/openid-connect/logout";
 
   static final String REQUEST_SEARCH_BY_NAME = "/games/name";
   static final String REQUEST_SEARCH_BY_GENRE = "/games/genre";
   static final String REQUEST_ADD_USER = "/users";
-  static final String REQUEST_CREATE_ORDER = "/orders";
+  static final String REQUEST_USER_BY_EMAIL = "/users/email";
+  static final String REQUEST_GET_OR_CREATE_ORDER = "/orders";
 
 
 

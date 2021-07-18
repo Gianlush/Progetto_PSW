@@ -40,8 +40,8 @@ class Model {
         }
       }
       _restManager.token = _authenticationData.accessToken;
-      print("last: "+_authenticationData.expiresIn.toString());
-      Timer.periodic(Duration(seconds: (45)), (Timer t) async {
+      print("token last: "+_authenticationData.expiresIn.toString());
+      Timer.periodic(Duration(seconds: (30)), (Timer t) async {
         bool refresh = await _refreshToken();
         if(!refresh)
           t.cancel();
@@ -72,6 +72,8 @@ class Model {
       return true;
     }
     catch (e) {
+      AccountPageState.forceLogout();
+      print("refresh failed");
       print(e);
       return false;
     }

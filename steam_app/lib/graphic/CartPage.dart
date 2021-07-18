@@ -31,11 +31,17 @@ class CartPageState extends State<CartPage>{
   Widget build(BuildContext context) {
     if(order.gamePerOrder.isEmpty)
       return Padding(
-          padding: EdgeInsets.fromLTRB(20,450,20,20),
-          child: Row(
-              mainAxisAlignment: MainAxisAlignment.center, 
-              crossAxisAlignment: CrossAxisAlignment.start, 
-              children: [Text("CART EMPTY!", style: TextStyle(fontSize: 35))]
+          padding: EdgeInsets.fromLTRB(20,95,20,20),
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text("CART EMPTY!", style: TextStyle(fontSize: 35)),
+                Padding(
+                    child: Opacity(child: Icon(Icons.shopping_basket_outlined,size: 300, color: Colors.deepPurple), opacity: 0.65),
+                    padding: EdgeInsets.fromLTRB(0, 200, 0, 0)
+                ),
+              ]
           )
       );
     else if(paying==false)

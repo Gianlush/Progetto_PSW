@@ -26,6 +26,7 @@ class AccountPageState extends State<AccountPage>{
   static bool logged = false;
   static bool correctCredentials = true;
   static bool forcedLogout = false;
+  static bool logging = false;
 
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
@@ -33,8 +34,10 @@ class AccountPageState extends State<AccountPage>{
   @override
   Widget build(BuildContext context) {
 
-    if(forcedLogout)
-      return ErrorView("SESSIONE EXPIRED! \n \n Login again!");
+    if(forcedLogout) {
+      user = null;
+      return ErrorView("SESSION EXPIRED! \n \n Login again! \n");
+    }
       
     else if(!correctCredentials){
       return ErrorView("WRONG CREDENTIALS!");
@@ -47,50 +50,75 @@ class AccountPageState extends State<AccountPage>{
   }
 
   Widget LoggingView(){
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        Padding(
-            child: Icon(Icons.shopping_basket_outlined,size: 300, color: Colors.deepPurple),
-            padding: EdgeInsets.fromLTRB(0, 200, 0, 0)
-        ),
-        Padding(
-            child: Text("Welcome!", style: TextStyle(color: Colors.deepPurple, fontSize: 30),),
-            padding: EdgeInsets.all(20)
-        ),
-        Flexible(child: Container(
-            padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
-            width: 500,
-            child: MyInputField(text: "Email", controller: emailController,))
-        ),
-        Flexible(child: Container(
-            padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
-            width: 500,
-            child: MyInputField(text: "Password", controller: passwordController, isPassword: true))
-        ),
-        Container(
-          width: 103,
-          child: RawMaterialButton(
-              onPressed: () => login(),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(60)),
-              fillColor: Colors.deepPurple,
-              child: Padding(
-                padding: EdgeInsets.all(22),
-                child: Row(
-                  children: [
-                    Text("Login", style: TextStyle(color: Colors.white)),
-                    Icon(Icons.login_outlined)
-                  ],
-                ),
-              )
+    if(!logging)
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Padding(
+              child: Icon(Icons.shopping_basket_outlined,size: 300, color: Colors.deepPurple),
+              padding: EdgeInsets.fromLTRB(0, 200, 0, 0)
           ),
-        )
-      ],
-    );
+          Padding(
+              child: Text("Welcome!", style: TextStyle(color: Colors.deepPurple, fontSize: 30),),
+              padding: EdgeInsets.all(20)
+          ),
+          Flexible(child: Container(
+              padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
+              width: 500,
+              child: MyInputField(text: "Email", controller: emailController,))
+          ),
+          Flexible(child: Container(
+              padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
+              width: 500,
+              child: MyInputField(text: "Password", controller: passwordController, isPassword: true))
+          ),
+          Container(
+            width: 103,
+            child: RawMaterialButton(
+                onPressed: () => login(),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(60)),
+                fillColor: Colors.deepPurple,
+                child: Padding(
+                  padding: EdgeInsets.all(22),
+                  child: Row(
+                    children: [
+                      Text("Login", style: TextStyle(color: Colors.white)),
+                      Icon(Icons.login_outlined)
+                    ],
+                  ),
+                )
+            ),
+          )
+        ],
+      );
+    else
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Padding(
+              child: Icon(Icons.shopping_basket_outlined,size: 300, color: Colors.deepPurple),
+              padding: EdgeInsets.fromLTRB(0, 200, 0, 0)
+          ),
+          Padding(
+              child: Text("Welcome!", style: TextStyle(color: Colors.deepPurple, fontSize: 30),),
+              padding: EdgeInsets.all(20)
+          ),
+          Flexible(child: Container(
+              padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
+              width: 500,
+              child: MyInputField(text: "Email", controller: emailController,))
+          ),
+          Flexible(child: Container(
+              padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
+              width: 500,
+              child: MyInputField(text: "Password", controller: passwordController, isPassword: true))
+          ),
+          CircularProgressIndicator()
+        ],
+      );
   }
 
   Widget LoggedView(){
-    searchOrders();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -200,10 +228,11 @@ class AccountPageState extends State<AccountPage>{
   }
 
   static forceLogout(){
-    logged = false;
-    user = null;
-    correctCredentials = true;
-    forcedLogout = true;
+    if(logged) {
+      logged = false;
+      correctCredentials = true;
+      forcedLogout = true;
+    }
   }
 
   logout() {
@@ -216,28 +245,34 @@ class AccountPageState extends State<AccountPage>{
   }
 
   login() {
+    setState(() {
+      logging = true;
+    });
+
     String email = emailController.text;
     String password = passwordController.text;
-    Model.sharedInstance.logIn(email, password).then((value) {
+    Model.sharedInstance.logIn(email, password).then((value) async {
       if(value == LogInResult.logged){
-        Model.sharedInstance.getUserByEmail( User(email: email) ).then((value) {
+          User value = await Model.sharedInstance.getUserByEmail( User(email: email) );
           user=value;
           searchOrders();
           setState(() {
+            logging = false;
             logged = true;
             correctCredentials = true;
           });
-        });
-        emailController.text="";
-        passwordController.text="";
+          emailController.text="";
+          passwordController.text="";
       }
       else if(value == LogInResult.error_wrong_credentials){
         setState(() {
+          logging = false;
           logged = false;
           correctCredentials = false;
         });
       }
     });
+
   }
 
   searchOrders(){

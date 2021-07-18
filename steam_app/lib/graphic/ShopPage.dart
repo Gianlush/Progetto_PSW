@@ -17,11 +17,11 @@ class ShopPage extends StatefulWidget {
 class _shopPageState extends State<ShopPage>{
 
   static List<Game> games;
-  bool searching = false;
-  int pageNumber = 1;
-  String lastSearchBy = "";
-  String lastSortBy = "";
-  String lastValue = "";
+  static bool searching = false;
+  static int pageNumber = 1;
+  static String lastSearchBy = "";
+  static String lastSortBy = "";
+  static String lastValue = "";
 
   TextEditingController textController = TextEditingController();
 
@@ -61,7 +61,10 @@ class _shopPageState extends State<ShopPage>{
     if(searching )
       return CircularProgressIndicator();
     else if(games == null)
-      return SizedBox.shrink();
+      return Padding(
+          child: Opacity(child: Icon(Icons.shopping_basket_outlined,size: 300, color: Colors.deepPurple), opacity: 0.65),
+          padding: EdgeInsets.fromLTRB(0, 300, 0, 0)
+      );
     else if(games.isEmpty && pageNumber == 1)
       return Expanded(child: Padding(padding: EdgeInsets.fromLTRB(0, 80, 0, 0),child: Text("NO RESULT!", style: TextStyle(fontSize: 35))));
     else

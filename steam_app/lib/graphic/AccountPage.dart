@@ -22,7 +22,7 @@ class AccountPage extends StatefulWidget {
 
 class AccountPageState extends State<AccountPage>{
 
-  static User user ;
+  static User user = null;
   static bool logged = false;
   static bool correctCredentials = true;
   static bool forcedLogout = false;
@@ -306,6 +306,12 @@ class AccountPageState extends State<AccountPage>{
                               children: [
                                 Text("Order placed on: ", style: TextStyle(color: Colors.blue, fontSize: 15)),
                                 Text("${o.shopDate.day}/${o.shopDate.month}/${o.shopDate.year}", style: TextStyle(color: Colors.white, fontSize: 18),),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Text("Time: ", style: TextStyle(color: Colors.blue, fontSize: 15)),
+                                Text("${o.shopDate.hour}:${o.shopDate.minute}", style: TextStyle(color: Colors.white, fontSize: 18),),
                               ],
                             ),
                             Row(

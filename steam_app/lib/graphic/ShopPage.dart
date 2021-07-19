@@ -16,12 +16,12 @@ class ShopPage extends StatefulWidget {
 
 class _shopPageState extends State<ShopPage>{
 
-  static List<Game> games;
-  static bool searching = false;
-  static int pageNumber = 1;
-  static String lastSearchBy = "";
-  static String lastSortBy = "";
-  static String lastValue = "";
+  List<Game> games;
+  bool searching = false;
+  int pageNumber = 1;
+  String lastSearchBy = "";
+  String lastSortBy = "";
+  String lastValue = "";
 
   TextEditingController textController = TextEditingController();
 

@@ -39,7 +39,7 @@ class CartPageState extends State<CartPage>{
                 Text("CART EMPTY!", style: TextStyle(fontSize: 35)),
                 Padding(
                     child: Opacity(child: Icon(Icons.shopping_basket_outlined,size: 300, color: Colors.deepPurple), opacity: 0.65),
-                    padding: EdgeInsets.fromLTRB(0, 200, 0, 0)
+                    padding: EdgeInsets.fromLTRB(0, 220, 0, 0)
                 ),
               ]
           )

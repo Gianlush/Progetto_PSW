@@ -36,7 +36,8 @@ class Order {
   
   static DateTime toDate(String date){
     List<int> list = date.split("-").map((i) => int.parse(i)).toList();
-    return DateTime(list[0],list[1],list[2]);
+    print(list);
+    return DateTime(list[0],list[1],list[2],list[3],list[4]);
   }
 
   GamePerOrder searchEqualGame(Game game){

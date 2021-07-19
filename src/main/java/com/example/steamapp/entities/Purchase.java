@@ -39,7 +39,7 @@ public class Purchase {
 
     @Basic
     @CreationTimestamp
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd-HH-mm")
     @Column(name = "shop_date")
     private Date shopDate;
 
